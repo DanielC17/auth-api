@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import type { SignInDTO, SignUpDTO } from './dtos/auth';
+import type { SignUpDTO, SignInDTO } from './dtos/auth';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
+  constructor(private prisma: PrismaService) {}
+
   async signUp(data: SignUpDTO) {
-    console.log(data);
-    return 'User signed up successfully';
+    const newUser = await this.prisma.user.create({ data });
+    if(newUser.id) {
+      console.log('User created successfully:', newUser);
+      return newUser;
+    }
+    return null;
   }
 
   async signIn(data: SignInDTO) {
-    console.log(data);
-    return 'User signed in successfully';
+    const user = 'teste';
+    return user;
   }
 }

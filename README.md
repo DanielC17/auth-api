@@ -1,98 +1,197 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# auth-api
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API de autenticação construída com **NestJS**, **Prisma** e **PostgreSQL**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Ela expõe endpoints para cadastro, login e consulta do perfil autenticado via JWT.
 
-## Description
+## Funcionalidades
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- cadastro de usuário com senha criptografada com bcrypt
+- login com geração de `accessToken`
+- rota protegida para obter o perfil do usuário autenticado
+- persistência em PostgreSQL com Prisma
+- validação global de payloads com `class-validator`
 
-## Project setup
+## Stack
 
-```bash
-$ npm install
-```
+- NestJS 11
+- Prisma 7
+- PostgreSQL 17
+- JWT
+- bcrypt
 
-## Compile and run the project
+## Estrutura principal
 
-```bash
-# development
-$ npm run start
+- `src/main.ts` — bootstrap da aplicação e `ValidationPipe` global
+- `src/auth/*` — controller, service, guard e DTOs de autenticação
+- `src/prisma/*` — integração do Prisma Client com o banco
+- `prisma/schema.prisma` — modelo `User`
+- `docker-compose.yml` — container local do PostgreSQL
 
-# watch mode
-$ npm run start:dev
+## Pré-requisitos
 
-# production mode
-$ npm run start:prod
-```
+- Node.js 18+ recomendado
+- npm
+- PostgreSQL local ou via Docker
 
-## Run tests
+## Instalação
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
+## Variáveis de ambiente
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Crie um arquivo `.env` na raiz do projeto com, no mínimo:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/DB_NAME?schema=public"
+JWT_SECRET="sua_chave_secreta"
+PORT=3000
+```
+
+Se estiver usando o `docker-compose.yml`, você também pode definir:
+
+```env
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME=auth_api
+```
+
+> Observação: configure um `JWT_SECRET` consistente no `.env`, porque o mesmo segredo é usado para assinar e validar os tokens.
+
+## Subindo o banco com Docker
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker compose up -d
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Prisma
 
-## Resources
+O schema do Prisma está em `prisma/schema.prisma` e o client é gerado em `generated/prisma`.
 
-Check out a few resources that may come in handy when working with NestJS:
+Comandos úteis:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+npx prisma generate
+npx prisma migrate dev
+npx prisma studio
+```
 
-## Support
+## Executando a aplicação
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+# desenvolvimento
+npm run start:dev
 
-## Stay in touch
+# execução padrão
+npm run start
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# produção
+npm run build
+npm run start:prod
+```
 
-## License
+Por padrão, o servidor sobe em `http://localhost:3000`.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Scripts disponíveis
+
+```bash
+npm run build
+npm run format
+npm run start
+npm run start:dev
+npm run start:debug
+npm run start:prod
+npm run lint
+npm run test
+npm run test:watch
+npm run test:cov
+npm run test:debug
+npm run test:e2e
+```
+
+## Endpoints
+
+### `POST /auth/signup`
+
+Cria um novo usuário.
+
+Payload:
+
+```json
+{
+  "name": "Daniele",
+  "email": "daniele@email.com",
+  "password": "123456"
+}
+```
+
+### `POST /auth/signin`
+
+Autentica o usuário e retorna o token JWT.
+
+Payload:
+
+```json
+{
+  "email": "daniele@email.com",
+  "password": "123456"
+}
+```
+
+Resposta esperada:
+
+```json
+{
+  "accessToken": "jwt_token_aqui",
+  "user": {
+    "id": "...",
+    "email": "daniele@email.com",
+    "name": "Daniele"
+  }
+}
+```
+
+### `GET /auth/profile`
+
+Rota protegida que retorna o conteúdo do token decodificado.
+
+Header necessário:
+
+```http
+Authorization: Bearer <accessToken>
+```
+
+## Regras de validação
+
+- `email` deve ser válido
+- `password` é obrigatório
+- `name` é obrigatório no cadastro
+
+## Modelo de dados
+
+O banco possui a tabela `users` com os campos:
+
+- `id`
+- `name`
+- `email`
+- `password`
+- `createdAt`
+- `updatedAt`
+
+O campo `email` é único.
+
+## Testes
+
+```bash
+npm run test
+npm run test:cov
+npm run test:e2e
+```
+
+> Observação: o teste e2e atual ainda está com um cenário padrão de `GET /` e deve ser atualizado para refletir os endpoints reais de autenticação.
+
+## Licença
+
+UNLICENSED

@@ -4,11 +4,12 @@ import 'dotenv/config';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private logger: Logger) {}
+  private readonly logger = new Logger(AuthGuard.name, { timestamp: true });
+  constructor(private jwtService: JwtService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest(); // acesso a req
 
-    const token = this.#extractTokenFromHeader(request);
+    const token = this.extractTokenFromHeader(request);
 
     if (!token) {
       this.logger.error('Token not provided in request headers');
@@ -29,7 +30,7 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
-  private #extractTokenFromHeader(request: Request): string | null {
+  extractTokenFromHeader(request: Request): string | null {
     const [type, token] = request.headers['authorization']?.split(' ') ?? []; // Desestruturação do header Authorization para pegar token
     return type === 'Bearer' ? token : null;
   }

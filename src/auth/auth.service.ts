@@ -6,7 +6,10 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   async signUp(data: SignUpDTO) {
     const verifyUserExists = await this.#userExists(data.email);
@@ -39,11 +42,10 @@ export class AuthService {
       throw new Error('Incorrect email or password');
     }
 
-
     const accessToken = this.jwtService.sign({
       userId: user.id,
       email: user.email,
-      name: user.name
+      name: user.name,
     });
     console.log('User signed in successfully:', user.email);
 
@@ -54,7 +56,7 @@ export class AuthService {
         email: user.email,
         name: user.name,
       },
-    }
+    };
 
     return result;
   }
